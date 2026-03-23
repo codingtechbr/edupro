@@ -841,7 +841,7 @@
   async function chamarAnthropicAPI(prompt) {
   const url = "/api/claude";
     const body = {
-     model: "claude-3-haiku-20240307"
+     model: "claude-3-haiku-20240307",
       max_tokens: 1500,
       messages: [{ role: "user", content: prompt }],
       system: "Você é um assistente pedagógico especialista em educação brasileira. Responda sempre em português do Brasil de forma prática e objetiva."
