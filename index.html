@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPro — Plataforma Educacional</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     TELA DE LOGIN
+══════════════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="logo-icon">🎓</span>
+      <h1>EduPro</h1>
+      <p>Plataforma Inteligente para Educadores</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Cadastrar</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login" class="auth-form">
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <div id="login-error" class="auth-error"></div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">Entrar na plataforma</button>
+    </div>
+
+    <!-- CADASTRO -->
+    <div id="form-register" class="auth-form hidden">
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" id="reg-name" placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="reg-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="reg-password" placeholder="mín. 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Perfil</label>
+        <select id="reg-role">
+          <option value="professor">👩‍🏫 Professor</option>
+          <option value="direcao">👑 Direção</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Código de convite</label>
+        <input type="text" id="reg-code" placeholder="Código de acesso">
+      </div>
+      <div id="reg-error" class="auth-error"></div>
+      <button class="btn btn-primary btn-full" onclick="doRegister()">Criar conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     APP PRINCIPAL
+══════════════════════════════════════════════════════════ -->
+<div id="app-screen">
+  <div class="app-layout">
+
+    <!-- Overlay mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- ── SIDEBAR ── -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-title"><span>🎓</span> EduPro</div>
+        <div class="logo-sub" id="school-name">Escola</div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <button class="nav-item active" onclick="navTo('dashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </button>
+
+        <div class="nav-section-title" id="nav-sec-professor">Sala de Aula</div>
+        <button class="nav-item" onclick="navTo('chamada')" id="nav-chamada">
+          <span class="nav-icon">✅</span> Chamada Digital
+        </button>
+        <button class="nav-item" onclick="navTo('frequencia')" id="nav-frequencia">
+          <span class="nav-icon">📈</span> Frequência
+        </button>
+        <button class="nav-item" onclick="navTo('planos')" id="nav-planos">
+          <span class="nav-icon">📝</span> Planos de Aula
+        </button>
+        <button class="nav-item" onclick="navTo('anotacoes')" id="nav-anotacoes">
+          <span class="nav-icon">🗒️</span> Anotações
+        </button>
+
+        <div class="nav-section-title">Inteligência Artificial</div>
+        <button class="nav-item" onclick="navTo('chat')">
+          <span class="nav-icon">🤖</span> Assistente IA
+        </button>
+
+        <div class="nav-section-title">Gerenciar</div>
+        <button class="nav-item" onclick="navTo('turmas')" id="nav-turmas">
+          <span class="nav-icon">🏫</span> Turmas &amp; Alunos
+        </button>
+        <button class="nav-item" onclick="navTo('exportar')">
+          <span class="nav-icon">📤</span> Exportar Excel
+        </button>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name-display">—</div>
+          <div class="user-role" id="user-role-display">—</div>
+        </div>
+        <button class="btn btn-icon btn-secondary" onclick="doLogout()" title="Sair" style="margin-left:auto">⏻</button>
+      </div>
+    </nav>
+
+    <!-- ── MAIN ── -->
+    <div class="main-content">
+      <header class="topbar">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-actions" id="topbar-actions"></div>
+      </header>
+
+      <!-- ════════════════ DASHBOARD ════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="kpi-card blue">
+            <div class="kpi-icon">🎓</div>
+            <div class="kpi-label">Total de Alunos</div>
+            <div class="kpi-value" id="kpi-alunos">0</div>
+            <div class="kpi-sub">cadastrados</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-label">Frequência Média</div>
+            <div class="kpi-value" id="kpi-freq">—</div>
+            <div class="kpi-sub">do período</div>
+          </div>
+          <div class="kpi-card yellow">
+            <div class="kpi-icon">📝</div>
+            <div class="kpi-label">Planos de Aula</div>
+            <div class="kpi-value" id="kpi-planos">0</div>
+            <div class="kpi-sub">salvos</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-icon">🏫</div>
+            <div class="kpi-label">Turmas</div>
+            <div class="kpi-value" id="kpi-turmas">0</div>
+            <div class="kpi-sub">ativas</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">⚡ Acesso Rápido</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+            <button class="btn btn-secondary" style="height:70px;flex-direction:column;gap:4px" onclick="navTo('chamada')">
+              <span style="font-size:24px">✅</span>
+              <span>Fazer Chamada</span>
+            </button>
+            <button class="btn btn-secondary" style="height:70px;flex-direction:column;gap:4px" onclick="navTo('planos')">
+              <span style="font-size:24px">📝</span>
+              <span>Gerar Plano IA</span>
+            </button>
+            <button class="btn btn-secondary" style="height:70px;flex-direction:column;gap:4px" onclick="navTo('chat')">
+              <span style="font-size:24px">🤖</span>
+              <span>Chat com IA</span>
+            </button>
+            <button class="btn btn-secondary" style="height:70px;flex-direction:column;gap:4px" onclick="navTo('exportar')">
+              <span style="font-size:24px">📤</span>
+              <span>Exportar Excel</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="section" id="dash-chamadas-recentes">
+          <div class="section-title" style="margin-bottom:16px">📋 Últimas Chamadas</div>
+          <div id="dash-chamadas-lista"><p style="color:var(--text3);font-size:14px">Nenhuma chamada registrada ainda.</p></div>
+        </div>
+      </div>
+
+      <!-- ════════════════ TURMAS ════════════════ -->
+      <div class="page" id="page-turmas">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">🏫 Turmas</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-nova-turma')">+ Nova Turma</button>
+          </div>
+          <div id="turmas-lista"><p style="color:var(--text3);font-size:14px">Nenhuma turma cadastrada.</p></div>
+        </div>
+
+        <div class="section" id="section-alunos" style="display:none">
+          <div class="section-header">
+            <div class="section-title" id="turma-selecionada-title">🎓 Alunos</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-aluno')">+ Novo Aluno</button>
+          </div>
+          <div id="alunos-lista"></div>
+        </div>
+      </div>
+
+      <!-- ════════════════ CHAMADA ════════════════ -->
+      <div class="page" id="page-chamada">
+        <div class="help-tip">
+          <span class="tip-icon">💡</span>
+          <span>Clique em um aluno para alternar entre <strong>Presente</strong>, <strong>Falta</strong> e <strong>Justificado</strong>. Depois clique em <strong>Salvar Chamada</strong>.</span>
+        </div>
+
+        <div class="filters">
+          <select id="chamada-turma-sel" onchange="carregarChamada()">
+            <option value="">Selecione a turma...</option>
+          </select>
+          <input type="date" id="chamada-data" onchange="verificarChamadaExistente()">
+          <button class="btn btn-success btn-sm" onclick="salvarChamada()">💾 Salvar Chamada</button>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title" id="chamada-titulo">Selecione uma turma</div>
+            <div id="chamada-resumo" style="display:flex;gap:12px;font-size:13px"></div>
+          </div>
+          <div class="chamada-grid" id="chamada-grid">
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <h3>Nenhuma turma selecionada</h3>
+              <p>Selecione uma turma para iniciar a chamada</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ FREQUÊNCIA ════════════════ -->
+      <div class="page" id="page-frequencia">
+        <div class="filters">
+          <select id="freq-turma-sel" onchange="carregarFrequencia()">
+            <option value="">Selecione a turma...</option>
+          </select>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">📈 Frequência por Aluno</div>
+            <div style="font-size:13px;color:var(--text3)">⚠️ Alerta abaixo de 75%</div>
+          </div>
+          <div id="freq-tabela">
+            <div class="empty-state">
+              <div class="empty-icon">📊</div>
+              <h3>Selecione uma turma</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ PLANOS ════════════════ -->
+      <div class="page" id="page-planos">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">📝 Gerar Plano com IA</div>
+          </div>
+          <div class="three-col" style="margin-bottom:16px">
+            <div class="form-group">
+              <label>Disciplina</label>
+              <input type="text" id="plan-disciplina" placeholder="Ex: Matemática">
+            </div>
+            <div class="form-group">
+              <label>Turma / Série</label>
+              <input type="text" id="plan-turma" placeholder="Ex: 5º Ano A">
+            </div>
+            <div class="form-group">
+              <label>Duração</label>
+              <input type="text" id="plan-duracao" placeholder="Ex: 50 minutos">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Tema / Conteúdo</label>
+            <input type="text" id="plan-tema" placeholder="Ex: Frações equivalentes">
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Objetivos ou observações (opcional)</label>
+            <input type="text" id="plan-obs" placeholder="Ex: Usar material concreto, atividade em grupo...">
+          </div>
+          <button class="btn btn-primary" onclick="gerarPlano()">✨ Gerar com IA</button>
+        </div>
+
+        <div class="section" id="section-plano-resultado" style="display:none">
+          <div class="section-header">
+            <div class="section-title">📄 Plano Gerado</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary btn-sm" onclick="salvarPlano()">💾 Salvar</button>
+            </div>
+          </div>
+          <textarea class="plan-editor" id="plan-resultado" rows="16"></textarea>
+        </div>
+
+        <div class="section">
+          <div class="section-title" style="margin-bottom:16px">📚 Planos Salvos</div>
+          <div id="planos-salvos-lista"><p style="color:var(--text3);font-size:14px">Nenhum plano salvo ainda.</p></div>
+        </div>
+      </div>
+
+      <!-- ════════════════ ANOTAÇÕES ════════════════ -->
+      <div class="page" id="page-anotacoes">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">🗒️ Nova Anotação</div>
+          </div>
+          <div class="two-col" style="margin-bottom:16px">
+            <div class="form-group">
+              <label>Turma</label>
+              <select id="nota-turma-sel" onchange="carregarAlunosNota()">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Aluno</label>
+              <select id="nota-aluno-sel">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Anotação</label>
+            <textarea id="nota-texto" rows="4" placeholder="Descreva o comportamento, desempenho, participação..." style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;resize:vertical;width:100%;outline:none;"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="sugestaoIA()">✨ Sugestão IA</button>
+            <button class="btn btn-primary btn-sm" onclick="salvarNota()">💾 Salvar Anotação</button>
+          </div>
+          <div id="nota-sugestao" style="display:none;margin-top:14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:14px;font-size:13px;color:var(--text2);line-height:1.7"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">📋 Anotações Salvas</div>
+            <input class="search-input" placeholder="Buscar aluno..." id="nota-search" oninput="filtrarNotas()" style="width:220px">
+          </div>
+          <div class="notas-grid" id="notas-lista">
+            <div class="empty-state" style="grid-column:1/-1">
+              <div class="empty-icon">🗒️</div>
+              <h3>Sem anotações</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ CHAT IA ════════════════ -->
+      <div class="page" id="page-chat">
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg ai">
+              <div class="msg-avatar">🤖</div>
+              <div class="msg-bubble">
+                Olá! Sou o assistente pedagógico do EduPro. Posso ajudar com planejamento de aulas, estratégias de ensino, avaliações, gestão de sala de aula e muito mais. Como posso te ajudar hoje?
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <textarea id="chat-input" placeholder="Digite sua pergunta pedagógica..." onkeydown="chatEnter(event)"></textarea>
+            <button class="btn btn-primary btn-icon" onclick="enviarChat()" style="width:44px;height:44px;flex-shrink:0">➤</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ EXPORTAR ════════════════ -->
+      <div class="page" id="page-exportar">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">📤 Exportar para Excel</div>
+          </div>
+          <div class="help-tip">
+            <span class="tip-icon">💡</span>
+            <span>Os arquivos Excel serão baixados automaticamente para o seu computador.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+            <div class="section" style="margin:0;text-align:center">
+              <div style="font-size:40px;margin-bottom:12px">📊</div>
+              <div style="font-weight:600;margin-bottom:8px">Frequência Geral</div>
+              <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Todos os alunos e percentuais de presença</div>
+              <button class="btn btn-primary btn-sm btn-full" onclick="exportarFrequencia()">Baixar Excel</button>
+            </div>
+            <div class="section" style="margin:0;text-align:center">
+              <div style="font-size:40px;margin-bottom:12px">🗒️</div>
+              <div style="font-weight:600;margin-bottom:8px">Anotações</div>
+              <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Todas as anotações de alunos</div>
+              <button class="btn btn-primary btn-sm btn-full" onclick="exportarAnotacoes()">Baixar Excel</button>
+            </div>
+            <div class="section" style="margin:0;text-align:center">
+              <div style="font-size:40px;margin-bottom:12px">📝</div>
+              <div style="font-weight:600;margin-bottom:8px">Planos de Aula</div>
+              <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Lista de planos gerados</div>
+              <button class="btn btn-primary btn-sm btn-full" onclick="exportarPlanos()">Baixar Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /app-layout -->
+</div><!-- /app-screen -->
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAIS
+══════════════════════════════════════════════════════════ -->
+
+<!-- Modal: Nova Turma -->
+<div class="modal-overlay" id="modal-nova-turma">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🏫 Nova Turma</div>
+      <button class="modal-close" onclick="closeModal('modal-nova-turma')">✕</button>
+    </div>
+    <div class="auth-form" style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-group">
+        <label>Nome da turma</label>
+        <input type="text" id="nova-turma-nome" placeholder="Ex: 5º Ano A">
+      </div>
+      <div class="form-group">
+        <label>Ano / Série</label>
+        <input type="text" id="nova-turma-serie" placeholder="Ex: 2024">
+      </div>
+      <div class="form-group">
+        <label>Turno</label>
+        <select id="nova-turma-turno">
+          <option value="Manhã">Manhã</option>
+          <option value="Tarde">Tarde</option>
+          <option value="Noite">Noite</option>
+          <option value="Integral">Integral</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="salvarTurma()">Criar Turma</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Novo Aluno -->
+<div class="modal-overlay" id="modal-novo-aluno">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🎓 Novo Aluno</div>
+      <button class="modal-close" onclick="closeModal('modal-novo-aluno')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-group">
+        <label>Nome do aluno</label>
+        <input type="text" id="novo-aluno-nome" placeholder="Nome completo">
+      </div>
+      <div class="form-group">
+        <label>Matrícula (opcional)</label>
+        <input type="text" id="novo-aluno-matricula" placeholder="Número de matrícula">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="salvarAluno()">Adicionar Aluno</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ver Plano Salvo -->
+<div class="modal-overlay" id="modal-ver-plano">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div class="modal-title" id="ver-plano-titulo">Plano de Aula</div>
+      <button class="modal-close" onclick="closeModal('modal-ver-plano')">✕</button>
+    </div>
+    <textarea class="plan-editor" id="ver-plano-conteudo" rows="18" readonly></textarea>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════ -->
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, query, where, updateDoc, deleteDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // Expõe globalmente para app.js usar
+  window._firebase = { initializeApp, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile,
+    getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, query, where, updateDoc, deleteDoc, serverTimestamp };
+</script>
+<!-- SheetJS para Excel -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<!-- Configurações do usuário -->
+<script src="config.js"></script>
+<!-- Lógica da aplicação -->
+<script src="app.js"></script>
+
+</body>
+</html>
