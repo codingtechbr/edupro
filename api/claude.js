@@ -1,1 +1,1 @@
-console.log("KEY CHEGANDO:", process.env.ANTHROPIC_KEY);
+console.log("KEY:", process.env.ANTHROPIC_KEY);
