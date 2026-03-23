@@ -841,7 +841,7 @@
   async function chamarAnthropicAPI(prompt) {
   const url = "/api/claude";
     const body = {
-      model: "claude-sonnet-4-20250514",
+     model: "claude-3-haiku-20240307"
       max_tokens: 1500,
       messages: [{ role: "user", content: prompt }],
       system: "Você é um assistente pedagógico especialista em educação brasileira. Responda sempre em português do Brasil de forma prática e objetiva."
@@ -863,7 +863,7 @@
 
 async function chamarAnthropicAPIChat(history) {
   const body = {
-    model: "claude-sonnet-4-20250514",
+    model: "claude-3-haiku-20240307",
     max_tokens: 1000,
     system: "Você é um assistente pedagógico especialista em educação brasileira. Ajude professores e gestores escolares com estratégias de ensino, planejamento, gestão de sala de aula e questões pedagógicas. Responda sempre em português do Brasil.",
     messages: history.slice(-20)
